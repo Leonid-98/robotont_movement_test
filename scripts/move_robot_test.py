@@ -13,8 +13,10 @@ class MovementTestNode:
 
     def odometry_callback(self, received_message: Odometry):
         send_command = Twist()
-        send_command.angular.z = 1.0  # Only want ot rotate robot for now
-        rospy.loginfo(received_message)
+        send_command.angular.z = 1.5  # Only want ot rotate robot for now
+        self.pub.publish(send_command)
+        # formatted_command = f"{received_message.pose}" 
+        # rospy.loginfo(formatted_command)
 
     def start(self):
         rospy.loginfo(f"{self.node_name} has been started.")
