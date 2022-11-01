@@ -29,13 +29,14 @@ class MovementTestNode:
         rospy.init_node(self.node_name)
         self.pub = rospy.Publisher("/cmd_vel", Twist, queue_size=10)
         self.sub = rospy.Subscriber("/odom", Odometry, callback=self.odometry_callback)
-        self.linear_speed = 100
-        self.rotation_speed = 10
+        self.linear_speed = 0.1
+        self.rotation_speed = 1
         self.x = 0
         self.y = 0
         self.z = 0
 
     def odometry_callback(self, received_message: Odometry):
+        rospy.loginfo(self.linear_speed)
         send_command = Twist()
         send_command.linear.x = self.x
         send_command.linear.y = self.y
@@ -55,9 +56,8 @@ class MovementTestNode:
         orient_w = round(received_message.pose.pose.orientation.w, 4)
         # orientation_formatted = format_values_to_columns(orient_z, orient_w)
         
-
-        rospy.loginfo("XYZ SPEEDS: " + format_values_to_columns(self.x, self.y, self.z, x, y, z))
-        rospy.loginfo("ROT SPEEDS: "  + format_values_to_columns(pos_x, pos_y, orient_z))
+        # rospy.loginfo("XYZ SPEEDS: " + format_values_to_columns(self.x, self.y, self.z, x, y, z))
+        # rospy.loginfo("ROT SPEEDS: "  + format_values_to_columns(pos_x, pos_y, orient_z))
 
     def on_press(self, key):
         if key == keyboard.Key.esc:
@@ -79,6 +79,10 @@ class MovementTestNode:
             self.z = self.rotation_speed if self.z == 0 else 0
         elif key == "e":
             self.z = -self.rotation_speed if self.z == 0 else 0
+        elif key == "p":
+            self.linear_speed += 0.1 if self.linear_speed <= 1 else 1
+        elif key == "m":
+            self.linear_speed -= 0.1 if self.linear_speed >= 0 else 0
         elif key == "x":
             self.x = 0
             self.y = 0
